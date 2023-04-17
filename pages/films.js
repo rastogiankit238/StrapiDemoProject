@@ -5,7 +5,7 @@ import Films from '@/components/Films';
 import useSWR from 'swr';
 import { useFetchUser } from '@/lib/authContext';
 
-const films = ({films}) => {
+const FilmsPage = ({films}) => {
 const {user,loading}=useFetchUser();
 const [pageIndex, setPageIndex] = useState(1);
 const { data } = useSWR(
@@ -53,7 +53,7 @@ const { data } = useSWR(
   )
 }
 
-export default films;
+export default FilmsPage;
 
 export async function getStaticProps() {
     const filmsResponse = await fetcher(
