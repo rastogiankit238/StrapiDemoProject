@@ -1,3 +1,38 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.searchInput {
+  border: 2px solid black;
+  border-radius: 8px;
+}
+
+.movies {
+  border-radius: 10px;
+}
+
+.navSearch {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.popup {
+  display: flex;
+
+  position: absolute;
+
+  top: 3.5rem;
+
+  background-color: white;
+
+  color: black;
+
+  padding: 4px;
+
+  border-radius: 8px;
+
+  box-shadow: 1px 1px 1px 1px black;
+
+  right: 20rem;
+}

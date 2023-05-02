@@ -10,7 +10,7 @@ import markdownToHtml from '../../lib/markdownToHtml';
 import { useRouter } from "next/router";
 import { useState } from "react";
 
-const Film = ({film, jwt, plot, error}) => {
+const Game = ({game, jwt, description, error}) => {
   const {user,loading}=useFetchUser();
   const router = useRouter();
   const [review, setReview] = useState({
@@ -34,7 +34,7 @@ const Film = ({film, jwt, plot, error}) => {
           data: {
             review: review.value,
             reviewer: await getUserFromLocalCookie(),
-            film: film.id,
+            game: game.id,
           },
         }),
       });
@@ -54,23 +54,23 @@ const Film = ({film, jwt, plot, error}) => {
     <Layout user={user}>
         <h1 className="text-5xl md:text-6xl font-extrabold leading-tighter mb-4">
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-teal-400 py-2">
-            {film?.attributes?.title}
+            {game?.attributes?.title}
           </span>
         </h1>
         <p>
-          Directed by{' '}
+          Published by{' '}
           <span className="bg-gradient-to-r from-teal-400 to-blue-500 bg-clip-text text-transparent">
-            {film.attributes.director}
+            {game.attributes.publisher}
           </span>
         </p>
         <h2 className="text-3xl md:text-4xl font-extrabold leading-tighter mb-4 mt-4">
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-teal-400 py-2">
-            Plot
+            Description
           </span>
         </h2>
         <div
           className="tracking-wide font-normal text-sm"
-          dangerouslySetInnerHTML={{ __html: plot }}
+          dangerouslySetInnerHTML={{ __html: description }}
         ></div>
         {user && (
           <>
@@ -95,11 +95,11 @@ const Film = ({film, jwt, plot, error}) => {
               </form>
             </h2>
             <ul>
-              {film.attributes.reviews.data.length === 0 && (
+              {game.attributes.reviews.data.length === 0 && (
                 <span>No reviews yet</span>
               )}
-              {film.attributes.reviews &&
-                film.attributes.reviews.data.map((review) => {
+              {game.attributes.reviews &&
+                game.attributes.reviews.data.map((review) => {
                   return (
                     <li key={review.id}>
                       <span className="bg-gradient-to-r from-teal-400 to-blue-500 bg-clip-text text-transparent">
@@ -123,7 +123,7 @@ export async function getServerSideProps({params,req}){
   typeof window !== 'undefined'
     ? getTokenFromLocalCookie
     : getTokenFromServerCookie(req);
-    const filmResponse=await fetcher(`${process.env.NEXT_PUBLIC_STRAPI_URL}/films?populate=*&filters[slug]=${slug}`,jwt
+    const gameResponse=await fetcher(`${process.env.NEXT_PUBLIC_STRAPI_URL}/games?populate=*&filters[slug]=${slug}`,jwt
     ? {
         headers: {
           Authorization: `Bearer ${jwt}`,
@@ -131,21 +131,21 @@ export async function getServerSideProps({params,req}){
       }
     : ''
 );
-if (filmResponse.data) {
-  const plot = await markdownToHtml(filmResponse.data[0].attributes.plot);
+if (gameResponse.data) {
+  const description = await markdownToHtml(gameResponse.data[0].attributes.description);
   return {
     props: {
-      film: filmResponse.data[0],
-      plot,
+      game: gameResponse.data[0],
+      description,
       jwt: jwt ? jwt : '',
     },
   };
 } else {
   return {
     props: {
-      error: filmResponse.error.message,
+      error: gameResponse.error.message,
     },
   };
 }
 }
-export default Film;
+export default Game;

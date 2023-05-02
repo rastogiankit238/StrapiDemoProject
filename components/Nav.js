@@ -1,51 +1,53 @@
-import Link from "next/link"
-import { useState } from 'react';
-import { fetcher } from '../lib/api';
-import { setToken, unsetToken } from '../lib/auth';
-import { useUser } from '../lib/authContext';
+import Link from "next/link";
+import { useState, useEffect } from "react";
+import { fetcher } from "../lib/api";
+import { setToken, unsetToken } from "../lib/auth";
+import { useUser } from "../lib/authContext";
+import Search from "./Search";
 
-const Nav = () => {
-    const [data, setData] = useState({
-        identifier: '',
-        password: '',
-      });
-    
-      const { user, loading } = useUser();
-    
-      const handleSubmit = async (e) => {
-        e.preventDefault();
-        try{
-        const responseData = await fetcher(
-            `${process.env.NEXT_PUBLIC_STRAPI_URL}/auth/local`,
-            {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                identifier: data.identifier,
-                password: data.password,
-              }),
-            }
-          );
-          setToken(responseData);
+
+const Nav = ({navData}) => {
+  const [data, setData] = useState({
+    identifier: "",
+    password: "",
+  });
+
+  const { user, loading } = useUser();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const responseData = await fetcher(
+        `${process.env.NEXT_PUBLIC_STRAPI_URL}/auth/local`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            identifier: data.identifier,
+            password: data.password,
+          }),
         }
-        catch(error){
-            alert("Invalid credentials! Please try again")
-        }
-        };
-      
-        const logout = () => {
-          unsetToken();
-        };
-      
-        const handleChange = (e) => {
-          setData({ ...data, [e.target.name]: e.target.value });
-        };
+      );
+      setToken(responseData);
+    } catch (error) {
+      alert("Invalid credentials! Please try again");
+    }
+  };
+
+  const logout = () => {
+    unsetToken();
+  };
+
+  const handleChange = (e) => {
+    setData({ ...data, [e.target.name]: e.target.value });
+  };
 
   return (
+    //{ navData.data.attributes.data.map((data)=>(
     <nav className="flex flex-center justify-between w-full items-center mx-auto bg-white text-lg text-gray-700 px-4 py-4 md:py-0">
-         <div>
+        <div>
         <Link href="/" passHref>
           <span>
             {/* eslint-disable @next/next/no-img-element */}
@@ -55,50 +57,64 @@ const Nav = () => {
               width={200}
               height={50}
               alt="Strapi Logo"
-            />
+              />
           </span>
         </Link>
       </div>
       <svg
-        xmlns="http://www.w3.org/2000/svg"
-        id="menu-button"
-        className="h-6 w-6 cursor-pointer md:hidden block"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
+      xmlns="http://www.w3.org/2000/svg"
+      id="menu-button"
+      className="h-6 w-6 cursor-pointer md:hidden block"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
       >
         <path
           strokeLinecap="round"
           strokeLinejoin="round"
           strokeWidth="2"
           d="M4 6h16M4 12h16M4 18h16"
-        />
+          />
       </svg>
 
       <div
         className="hidden w-full md:flex md:items-center md:w-auto"
         id="menu"
       >
-      <ul
+        <ul
           className="
-              pt-4
-              text-base text-gray-700
-              md:flex
+          pt-4
+          text-base text-gray-700
+          md:flex
               md:justify-between 
               md:pt-0 space-x-2"
         >
-          <li>
-            <Link href="/">
-              <span className="md:p-2 py-2 block hover:text-purple-400">Home</span>
+          <li className="navSearch">
+            <Search />
+          </li>
+            <li>
+            <Link href='/'>
+              <span className="md:p-2 py-2 block hover:text-purple-400">
+                Home
+              </span>
             </Link>
           </li>
           <li>
-            <Link href="/films">
-              <span className="md:p-2 py-2 block hover:text-purple-400" href="#">
+            <Link href='/films'>
+              <span className="md:p-2 py-2 block hover:text-purple-400">
                 Films
               </span>
             </Link>
           </li>
+          <li>
+            <Link href='/games'>
+              <span className="md:p-2 py-2 block hover:text-purple-400">
+                Games
+              </span>
+            </Link>
+          </li>
+
+          
           {!loading &&
             (user ? (
               <li>
@@ -109,7 +125,7 @@ const Nav = () => {
                 </Link>
               </li>
             ) : (
-              ''
+              ""
             ))}
           {!loading &&
             (user ? (
@@ -117,13 +133,13 @@ const Nav = () => {
                 <span
                   className="md:p-2 py-2 block hover:text-purple-400"
                   onClick={logout}
-                  style={{ cursor: 'pointer' }}
-                >
+                  style={{ cursor: "pointer" }}
+                  >
                   Logout
                 </span>
               </li>
             ) : (
-              ''
+              ""
             ))}
           {!loading && !user ? (
             <>
@@ -136,7 +152,7 @@ const Nav = () => {
                     placeholder="Username"
                     className="md:p-2 form-input py-2 rounded mx-2"
                     required
-                  />
+                    />
                   <input
                     type="password"
                     name="password"
@@ -163,13 +179,13 @@ const Nav = () => {
               </li>
             </>
           ) : (
-            ''
+            ""
           )}
-          </ul>
-          </div>
-    </nav>
-    
-  )
-}
+        </ul>
+        </div>
+      </nav>
+ // ))}
+  );
+};
 
-export default Nav
+export default Nav;
